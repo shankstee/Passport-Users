@@ -6,6 +6,9 @@
 var express = require("express");
 var exphbs  = require('express-handlebars');
 
+// set the index.js in the routes folder to this variable.
+var routes = require("./routes");
+
 require("dotenv").config();
 
 // ==============================================================================
@@ -16,6 +19,9 @@ require("dotenv").config();
 // Tells node that we are creating an "express" server
 var app = express();
 
+// Tell app to use the routes folder
+app.use(routes);
+
 // Sets an initial port. We"ll use this later in our listener
 var PORT = process.env.PORT || 8080;
 
@@ -24,10 +30,17 @@ var PORT = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
+// Make public a static folder
+app.use(express.static("public"));
+
 // Handlebars middleware
 
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
+
+app.use(routes);
+
 
 
 // ================================================================================
@@ -40,17 +53,6 @@ app.set('view engine', 'handlebars');
 // require("./app/routing/htmlRoutes")(app);
 
 
-app.get("/", function(req, res){
-    res.render("index", {welcome: "Welcome to your database"});
-});
-
-app.post("/register", function(req, res, next){
-    res.render("register", {welcomeTwo: "You are logged in"});
-});
-
-app.get('*', function(req, res) {
-    res.render('error');
-  });
 
 // ==============================================================================
 // LISTENER
