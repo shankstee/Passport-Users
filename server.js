@@ -6,6 +6,8 @@
 var express = require("express");
 var exphbs  = require('express-handlebars');
 
+var db = require("./models");
+
 // set the index.js in the routes folder to this variable.
 var routes = require("./routes");
 
@@ -19,8 +21,6 @@ require("dotenv").config();
 // Tells node that we are creating an "express" server
 var app = express();
 
-// Tell app to use the routes folder
-app.use(routes);
 
 // Sets an initial port. We"ll use this later in our listener
 var PORT = process.env.PORT || 8080;
@@ -59,6 +59,8 @@ app.use(routes);
 // The below code effectively "starts" our server
 // ==============================================================================
 
-app.listen(PORT, function() {
-  console.log("App listening on PORT: " + PORT);
+db.sequelize.sync().then(function() {
+  app.listen(PORT, function() {
+    console.log("App listening on PORT: " + PORT);
+  });
 });
