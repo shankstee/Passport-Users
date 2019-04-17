@@ -5,11 +5,19 @@
 
 var express = require("express");
 var exphbs  = require('express-handlebars');
+var expressValidator = require('express-validator');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var randomstring = require("randomstring");
 
+
+
+//Require the models folder
 var db = require("./models");
 
 // set the index.js in the routes folder to this variable.
 var routes = require("./routes");
+
 
 require("dotenv").config();
 
@@ -29,28 +37,31 @@ var PORT = process.env.PORT || 8080;
 // The code below is pretty standard.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(expressValidator());
 
 
 // Make public a static folder
 app.use(express.static("public"));
 
-// Handlebars middleware
+app.use(cookieParser());
 
+
+
+app.use(session({ secret: randomstring.generate(), resave: false, saveUninitialized: true }));
+
+
+// Handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-
+// Tell app to use the routes folder
 app.use(routes);
 
 
 
-// ================================================================================
-// ROUTER
-// The below points our server to a series of "route" files.
-// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
-// ================================================================================
 
-// require("./app/routing/apiRoutes")(app);
-// require("./app/routing/htmlRoutes")(app);
+
+
+
 
 
 

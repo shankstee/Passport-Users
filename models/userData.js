@@ -3,11 +3,13 @@ module.exports = function (sequelize, DATATYPE) {
         // attributes
         userName: {
           type: DATATYPE.STRING(20),
-          allowNull: false
+          allowNull: false,
+          unique: true
         },
         email: {
           type: DATATYPE.STRING(100),
           allowNull: false,
+          unique: true
         },
         password: {
             type: DATATYPE.STRING(60).BINARY,
