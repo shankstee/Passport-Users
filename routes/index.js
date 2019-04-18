@@ -6,6 +6,10 @@ var db = require("../models");
 var bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+var passport = require("passport");
+
+
+
 // var session = require("express-session");
 
 
@@ -17,7 +21,9 @@ router.get("/register", function (req, res) {
 });
 
 router.get("/", function (req, res) {
-    res.render("home", { welcome: "Welcome" });
+    console.log(req.user);
+    console.log(req.isAuthenticated());
+    res.render("home", { title: "Welcome" });
 });
 
 router.post("/register", function (req, res, next) {
@@ -39,6 +45,7 @@ router.post("/register", function (req, res, next) {
             errors: error
         });
 
+        // not sure why this return is needed to avoid a header error?
         return;
     } else{
 
@@ -51,20 +58,33 @@ router.post("/register", function (req, res, next) {
                 userName: req.body.userName,
                 email: req.body.email,
                 password: hash
-            }).then(function () {
-                
+            }).then(function (data, err) {
+                if (err) throw err;
+                var userID = data.dataValues.id;
+                console.log(userID);
+
+                req.login(userID, function (err) {
+                    if (err) throw err;
+                    res.redirect("/");
+                    
+                })
 
             });
         }); 
     };
 
-
-    res.render("register", { welcome: "Welcome in!" });
-
-
-
-
+    // res.render("register", { welcome: "Welcome in!" });
 });
+
+
+passport.serializeUser(function(userID, done) {
+    done(null, userID);
+  });
+  
+  passport.deserializeUser(function(userID, done) {
+      done(null, userID);
+    
+  });
 
 router.get('*', function (req, res) {
     res.render('error');

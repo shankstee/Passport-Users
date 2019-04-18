@@ -8,7 +8,11 @@ var exphbs  = require('express-handlebars');
 var expressValidator = require('express-validator');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var Sequelize = require("sequelize");
 var randomstring = require("randomstring");
+var passport = require("passport");
+// initalize sequelize with session store
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 
 
@@ -45,16 +49,47 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Tell app to use the routes folder
+app.use(routes);
+
+var sequelize = new Sequelize(
+  "passportPractice",
+  "Sessions",
+  "password", {
+      "dialect": "sqlite",
+      "storage": "./session.sqlite"
+  });
+
+  var mySessionStore = new SequelizeStore({
+    db: sequelize
+  });
+  // make sure that Session tables are in place
+  mySessionStore.sync();
 
 
-app.use(session({ secret: randomstring.generate(), resave: false, saveUninitialized: true }));
+
+// app.use(session({ secret: randomstring.generate(), resave: false, saveUninitialized: false }));
+
+
+app.use(session({
+  secret: randomstring.generate(),
+  store: new SequelizeStore({
+    db: sequelize
+  }),
+  resave: false, // we support the touch method so per the express-session docs this should be set to false
+  proxy: true // if you do SSL outside of node.
+}))
+
+
 
 
 // Handlebars middleware
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-// Tell app to use the routes folder
-app.use(routes);
+
 
 
 
