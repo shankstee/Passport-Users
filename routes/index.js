@@ -13,14 +13,26 @@ var passport = require("passport");
 // var session = require("express-session");
 
 
-
+// Requiring our custom middleware for checking if a user is logged in
+var isAuthenticated = require("../config/isAuthenticated");
 
 
 router.get("/register", function (req, res) {
     res.render("register", { welcome: "Welcome to your database please sign up" });
 });
 
-router.get("/", function (req, res) {
+router.get("/login", function (req, res) {
+    res.render("login", { welcome: "Please Login" });
+});
+
+router.post("/login", passport.authenticate(
+    "local", {
+        successRedirect: "/",
+        failureRedirect: "/login"
+    }
+));
+
+router.get("/", isAuthenticated, function (req, res) {
     console.log(req.user);
     console.log(req.isAuthenticated());
     res.render("home", { title: "Welcome" });
@@ -82,7 +94,8 @@ passport.serializeUser(function(userID, done) {
   });
   
   passport.deserializeUser(function(userID, done) {
-      done(null, userID);
+        done(null, userID);
+    
     
   });
 

@@ -10,9 +10,12 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var Sequelize = require("sequelize");
 var randomstring = require("randomstring");
-var passport = require("passport");
+
 // initalize sequelize with session store
-var SequelizeStore = require('connect-session-sequelize')(session.Store);
+var passport = require("passport");
+var LocalStrategy = require('passport-local').Strategy;
+
+
 
 
 
@@ -49,39 +52,39 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+
+
+app.use(session({ secret: randomstring.generate(), resave: false, saveUninitialized: false }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Tell app to use the routes folder
 app.use(routes);
 
-var sequelize = new Sequelize(
-  "passportPractice",
-  "Sessions",
-  "password", {
-      "dialect": "sqlite",
-      "storage": "./session.sqlite"
-  });
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    console.log(username);
+    console.log(password);
+    // const db = require("./models");
 
-  var mySessionStore = new SequelizeStore({
-    db: sequelize
-  });
-  // make sure that Session tables are in place
-  mySessionStore.sync();
+    db.userTable.findAll({
+      where: {
+        userName: username
+      }
+    }).then(function (data, err) {
+      if (err) done (err);
+      console.log(data);
 
+      if(data.length === 0) {
+        done(null, false);
+      }
+    })
 
+    return done(null, "dfasedfad");
+    }
+));
 
-// app.use(session({ secret: randomstring.generate(), resave: false, saveUninitialized: false }));
-
-
-app.use(session({
-  secret: randomstring.generate(),
-  store: new SequelizeStore({
-    db: sequelize
-  }),
-  resave: false, // we support the touch method so per the express-session docs this should be set to false
-  proxy: true // if you do SSL outside of node.
-}))
 
 
 
