@@ -27,8 +27,7 @@ router.get("/login", function (req, res) {
 
 router.post("/login", passport.authenticate(
     "local", {
-        successRedirect: "/",
-        failureRedirect: "/login"
+        successRedirect: "/"
     }
 ));
 
@@ -93,11 +92,11 @@ passport.serializeUser(function(userID, done) {
     done(null, userID);
   });
   
-  passport.deserializeUser(function(userID, done) {
-        done(null, userID);
-    
-    
-  });
+passport.deserializeUser(function(userID, done) {
+    done(null, userID);
+
+
+});
 
 router.get('*', function (req, res) {
     res.render('error');

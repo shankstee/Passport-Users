@@ -11,9 +11,11 @@ var session = require('express-session');
 var Sequelize = require("sequelize");
 var randomstring = require("randomstring");
 
+
 // initalize sequelize with session store
 var passport = require("passport");
 var LocalStrategy = require('passport-local').Strategy;
+var bcrypt = require("bcrypt");
 
 
 
@@ -77,11 +79,23 @@ passport.use(new LocalStrategy(
       console.log(data);
 
       if(data.length === 0) {
-        done(null, false);
+        return done(null, false);
       }
+      const userID = data[0].id;
+      const hash = data[0].password.toString();
+      console.log(hash);
+
+      bcrypt.compare(password, hash, function (err, response) {
+        if (response) {
+          return done(null, {user_id: userID});
+        } else {
+          return done(null, false);
+        }
+      })
+      
     })
 
-    return done(null, "dfasedfad");
+    
     }
 ));
 
