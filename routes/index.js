@@ -18,30 +18,30 @@ var isAuthenticated = require("../config/isAuthenticated");
 
 
 router.get("/register", function (req, res) {
-    res.render("register", { welcome: "Welcome to your database please sign up" });
+    res.render("register");
 });
 
-router.get("/login", function (req, res) {
-    res.render("login", { welcome: "Please Login" });
+router.get("/home", isAuthenticated,function (req, res) {
+    res.render("home");
 });
 
 router.post("/login", passport.authenticate(
     "local", {
-        successRedirect: "/",
-        failureRedirect: "/login"
+        successRedirect: "/home",
+        failureRedirect: "/"
     }
 ));
 
 router.get("/logout", function (req, res) {
     req.logout();
     req.session.destroy();
-    res.render("logout");
+    res.render("login");
 });
 
 router.get("/",  function (req, res) {
     console.log(req.user);
     console.log(req.isAuthenticated());
-    res.render("home", { title: "Welcome" });
+    res.render("login");
 });
 
 router.post("/register", function (req, res, next) {
