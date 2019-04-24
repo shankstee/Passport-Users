@@ -1,19 +1,39 @@
-<div class="container">
-    <form method="POST" action="/login">
-        <h1>{{welcome}}</h1>
-        <div class="form-group">
-            <label for="exampleInputEmail1">Username</label>
-            <input type="text" class="form-control" id="exampleInputEmail" aria-describedby="emailHelp"
-                placeholder="Enter email" name="username">
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        
-        <div class="form-group">
-            <label for="exampleInputPassword1">Password</label>
-            <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password"
-                name="password">
-        </div>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9 col-lg-8 mx-auto">
+                            <h3 class="login-heading mb-4">Welcome back!</h3>
+                            <form method="POST" action="/login">
+                                <div class="form-label-group">
+                                    <input type="text" id="inputEmail" class="form-control" placeholder="Email address"
+                                        name="username" required autofocus>
+                                    <label for="inputEmail">Email address</label>
+                                </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+                                <div class="form-label-group">
+                                    <input type="password" id="inputPassword" class="form-control"
+                                        placeholder="Password" name="password" required>
+                                    <label for="inputPassword">Password</label>
+                                </div>
+
+                                <div class="custom-control custom-checkbox mb-3">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                    <label class="custom-control-label" for="customCheck1">Remember password</label>
+                                </div>
+                                <button
+                                    class="btn btn-lg btn-primary btn-block btn-login text-uppercase font-weight-bold mb-2"
+                                    type="submit">Sign in</button>
+                                <div class="text-center">
+                                    <a class="small" href="#">Forgot password?</a></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
