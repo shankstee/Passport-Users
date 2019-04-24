@@ -13,6 +13,12 @@
     background-size: cover;
     background-position: center;
   }
+
+  .bg-imageRegister {
+    background-image: url('../imgs/example2.jpg');
+    background-size: cover;
+    background-position: center;
+  }
   
   .login-heading {
     font-weight: 300;
