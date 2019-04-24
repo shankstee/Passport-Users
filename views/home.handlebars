@@ -1,1 +1,10 @@
 <p>Home {{title}}</p>
+
+{{#if isAuthenticated}}
+    <a id="logoutButton" href="/logout">Logout</a>
+{{else}}
+    <a href="/login">Login</a>
+{{/if}}
+
+
+

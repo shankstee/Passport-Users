@@ -4,7 +4,7 @@
 // ==============================================================================
 
 var express = require("express");
-var exphbs  = require('express-handlebars');
+var exphbs = require('express-handlebars');
 var expressValidator = require('express-validator');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -16,6 +16,7 @@ var randomstring = require("randomstring");
 var passport = require("passport");
 var LocalStrategy = require('passport-local').Strategy;
 var bcrypt = require("bcrypt");
+var isAuthenticated = require("./config/isAuthenticated");
 
 
 
@@ -61,11 +62,16 @@ app.use(session({ secret: randomstring.generate(), resave: false, saveUninitiali
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(function(req,res,next) {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+});
+
 // Tell app to use the routes folder
 app.use(routes);
 
 passport.use(new LocalStrategy(
-  function(username, password, done) {
+  function (username, password, done) {
     console.log(username);
     console.log(password);
     // const db = require("./models");
@@ -75,28 +81,30 @@ passport.use(new LocalStrategy(
         userName: username
       }
     }).then(function (data, err) {
-      if (err) done (err);
+      if (err) done(err);
       console.log(data);
 
-      if(data.length === 0) {
-        return done(null, false);
-      }
-      const userID = data[0].id;
-      const hash = data[0].password.toString();
-      console.log(hash);
+      if (data.length === 0) {
+         done(null, false);
+      } else {
+        const userID = data[0].id;
+        const hash = data[0].password.toString();
+        console.log(hash);
 
-      bcrypt.compare(password, hash, function (err, response) {
-        if (response) {
-          return done(null, {user_id: userID});
-        } else {
-          return done(null, false);
-        }
-      })
-      
+        bcrypt.compare(password, hash, function (err, response) {
+          if (response) {
+            return done(null, { user_id: userID });
+          } else {
+            return done(null, false);
+          }
+        })
+      }
+
+
     })
 
-    
-    }
+
+  }
 ));
 
 
@@ -104,7 +112,7 @@ passport.use(new LocalStrategy(
 
 
 // Handlebars middleware
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 
@@ -122,8 +130,8 @@ app.set('view engine', 'handlebars');
 // The below code effectively "starts" our server
 // ==============================================================================
 
-db.sequelize.sync().then(function() {
-  app.listen(PORT, function() {
+db.sequelize.sync().then(function () {
+  app.listen(PORT, function () {
     console.log("App listening on PORT: " + PORT);
   });
 });

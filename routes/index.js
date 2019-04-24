@@ -27,11 +27,18 @@ router.get("/login", function (req, res) {
 
 router.post("/login", passport.authenticate(
     "local", {
-        successRedirect: "/"
+        successRedirect: "/",
+        failureRedirect: "/login"
     }
 ));
 
-router.get("/", isAuthenticated, function (req, res) {
+router.get("/logout", function (req, res) {
+    req.logout();
+    req.session.destroy();
+    res.render("logout");
+});
+
+router.get("/",  function (req, res) {
     console.log(req.user);
     console.log(req.isAuthenticated());
     res.render("home", { title: "Welcome" });
